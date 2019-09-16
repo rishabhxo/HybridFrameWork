@@ -1,0 +1,202 @@
+using Amazon.DynamoDBv2;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+       public static void Main()
+        {
+            //Lauch chrome driver
+            IWebDriver driver = new ChromeDriver(Environment.CurrentDirectory);
+            //Maximize the browser
+            driver.Manage().Window.Maximize();
+            //Launch turnup portal
+            driver.Navigate().GoToUrl("http://horse-dev.azurewebsites.net/Account/Login?ReturnUrl=%2f");
+
+            //Enter user name using ID
+            driver.FindElement(By.Id("UserName")).SendKeys("hari");
+            ////Enter password using ID
+            driver.FindElement(By.Id("Password")).SendKeys("123123");
+            //Click login using xpath
+            driver.FindElement(By.XPath("//*[@id='loginForm']/form/div[3]/input[1]")).Click();
+
+            //Validate Login button
+            IWebElement Hellohari = driver.FindElement(By.XPath("//*[@id='logoutForm']/ul/li/a"));
+
+            if (Hellohari.Text == "Hello hari!")
+            {
+                Console.WriteLine("Logged in Successfully,Test pass!");
+
+            }
+            else
+            {
+                Console.WriteLine("Logged in Failes,Test failed!");
+            }
+            //create time and material test
+
+
+
+            //Click on administration
+            driver.FindElement(By.XPath("/html/body/div[3]/div/div/ul/li[5]/a")).Click();
+
+
+            //click on time and material
+            driver.FindElement(By.XPath("/html/body/div[3]/div/div/ul/li[5]/ul/li[3]/a")).Click();
+
+            //click on create new button
+            driver.FindElement(By.XPath("//*[@id='container']/p/a")).Click();
+
+            //Verify the type code drop box
+            IWebElement typecode_dropbox = driver.FindElement(By.Id("TypeCode"));
+            if (typecode_dropbox != null)
+            {
+                driver.FindElement(By.XPath("//*[@id='TimeMaterialEditForm']/div/div[1]/div/span[1]/span/span[1]")).Click();
+
+                //Enter code value
+                driver.FindElement(By.Id("Code")).SendKeys("CS0100");
+                
+                  //Validate Code Value
+                    {
+                    string CodeInput = driver.FindElement(By.Id("Code")).GetAttribute("value");
+                     if(CodeInput != null )
+                    {
+                        //Enter description Value
+                        driver.FindElement(By.Id("Description")).SendKeys("ComputerScience");
+                        string DescInput = driver.FindElement(By.Id("Description")).GetAttribute("value");
+                        {
+                            if(DescInput != null)
+                            {
+                                //Enter Price per unit
+                               // driver.FindElement(By.Id("Price")).SendKeys(""+1234);
+
+                                //click save
+                                driver.FindElement(By.Id("SaveButton")).Click();
+
+                                Thread.Sleep(1000);
+
+                            }
+                            else
+                                Console.WriteLine("The Description field is required");
+                           
+                        }
+                    }
+                    else
+                        Console.WriteLine("The Code Feild is Required..");
+
+                }
+
+                
+               
+            }
+
+            //Navigate to last page
+            driver.FindElement(By.XPath("//*[@id='tmsGrid']/div[4]/a[3]")).Click();
+
+            //Verify record Existing or not
+            if (driver.FindElement(By.XPath("//*[@id='tmsGrid']/div[3]/table/tbody/tr[9]/td[1]")).Text == "CS0100")
+            
+
+            {
+                Console.WriteLine("Record created successfully, test passed");
+            }
+            else
+            {
+                Console.WriteLine("Records not created ,test failed!");
+            }
+
+
+            //Click on EDit button
+             driver.FindElement(By.XPath("//*[@id='tmsGrid']/div[3]/table/tbody/tr[1]/td[5]/a[1]")).Click();
+            
+            //Validate the Url of Edit button
+           
+
+            //Validate the Type code box
+            driver.FindElement(By.XPath("//*[@id='TimeMaterialEditForm']/div/div[1]/div/span[1]/span")).Click();
+          
+            driver.FindElement(By.XPath("//*[@id='TimeMaterialEditForm']/div/div[1]/div/span[1]/span/span[1]")).Click();
+
+            //Edit Type code and Validae it
+            driver.FindElement(By.Id("Code")).SendKeys("CS_001");
+            string CodeInputEdit = driver.FindElement(By.Id("Code")).GetAttribute("value");
+            if (CodeInputEdit != null)
+            {
+                //Enter description
+                driver.FindElement(By.Id("Description")).SendKeys("ComputerScience001");
+                string DescInputEdit = driver.FindElement(By.Id("Description")).GetAttribute("value");
+                {
+                    if (DescInputEdit != null)
+                    {
+                        //Enter Price per unit
+                       // driver.FindElement(By.Id("Price")).SendKeys("" + 12435);
+
+                        //click save
+                        driver.FindElement(By.Id("SaveButton")).Click();
+
+                        Thread.Sleep(1000);
+                        //navigate to last page
+                        driver.FindElement(By.XPath("//*[@id='tmsGrid']/div[4]/a[2]")).Click();
+
+                        //verify the updated records
+                        if (driver.FindElement(By.XPath("//*[@id='tmsGrid']/div[3]/table/tbody/tr/td[1]")).Text == "CS_001")
+                            
+                        {
+                            Console.WriteLine("Record Updated successfully, test passed");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Records not updates,Test failed!");
+                        }
+                    }
+                    else
+                        Console.WriteLine("The Description field is required");
+
+                }
+            }
+            else
+                Console.WriteLine("The Code Feild is Required..");
+            //Click Delete Button
+              driver.FindElement(By.XPath("//*[[@id='tmsGrid']/div[3]/table/tbody/tr[6]/td[5]/a[2]")).Click();
+             
+              string CodeInputdelete = driver.FindElement(By.Id("Code")).GetAttribute("value");
+              string DescInputdelete = driver.FindElement(By.Id("Description")).GetAttribute("value");
+
+             // Switch the control of 'driver' to the Alert from main Window
+             
+            IAlert confirmationAlert = driver.SwitchTo().Alert();
+
+            String alertText = confirmationAlert.Text;
+            if (alertText == "Ok")
+            {
+                Console.WriteLine("Alert text is " + confirmationAlert);
+
+
+                confirmationAlert.Accept();
+                
+
+            }
+            else
+            {
+                confirmationAlert.Dismiss();
+            }
+
+
+
+
+        }
+
+
+
+    }
+
+
+
+}
+
